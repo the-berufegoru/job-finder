@@ -35,5 +35,6 @@
       },
       "exclude": ["apps/job-finder-e2e/**/*"]
     }
-  ]
+  ],
+  "nxCloudAccessToken": "NTY3MjFiZTItNzFhNy00ZDAyLWE4YmMtM2Q2YzJhN2IzMzgwfHJlYWQtd3JpdGU="
 }
