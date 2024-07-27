@@ -1,0 +1,61 @@
+{
+  "name": "authentication",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/authentication/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/authentication",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/authentication/src/main.ts",
+        "tsConfig": "apps/authentication/tsconfig.app.json",
+        "assets": ["apps/authentication/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "generateLockfile": true,
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "authentication:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "authentication:build:development"
+        },
+        "production": {
+          "buildTarget": "authentication:build:production"
+        }
+      }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/authentication/Dockerfile . -t authentication"
+    }
+  }
+}
