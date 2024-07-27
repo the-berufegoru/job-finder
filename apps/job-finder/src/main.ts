@@ -1,14 +1,22 @@
-import express from 'express';
+/**
+ * @fileoverview Express application setup and configuration with request logging.
+ * @version 1.0.0
+ * @module appConfig
+ */
+import dotenv from 'dotenv';
+import express, { Application } from 'express';
+import { configureMiddlewares } from '@job-finder/middlewares';
+import { startServer } from '@job-finder/utils';
 
-const host = process.env.HOST ?? 'localhost';
-const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+dotenv.config();
 
-const app = express();
+/**
+ * The Express application instance.
+ * @type {Application}
+ */
+const app: Application = express();
 
-app.get('/', (req, res) => {
-  res.send({ message: 'Hello API' });
-});
+configureMiddlewares(app);
+app.use(express.static('docs'));
 
-app.listen(port, host, () => {
-  console.log(`[ ready ] http://${host}:${port}`);
-});
+startServer(app, 'Job-Finder');
