@@ -14,8 +14,6 @@
 <img src="https://img.shields.io/github/last-commit/the-berufegoru/job-finder?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
 <img src="https://img.shields.io/github/languages/top/the-berufegoru/job-finder?style=flat&color=0080ff" alt="repo-top-language">
 <img src="https://img.shields.io/github/languages/count/the-berufegoru/job-finder?style=flat&color=0080ff" alt="repo-language-count">
-<img src="https://img.shields.io/github/workflow/status/the-berufegoru/job-finder/CI?style=flat&color=0080ff" alt="CI status">
-<img src="https://img.shields.io/github/workflow/status/the-berufegoru/job-finder/CodeQL?style=flat&color=0080ff" alt="CodeQL status">
 
 <p>
 <p align="center">
