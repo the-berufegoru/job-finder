@@ -5,5 +5,5 @@
  */
 
 export interface ILoggerConfig {
-  system: string;
+  logger: string;
 }
