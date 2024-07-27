@@ -3,12 +3,9 @@
  * @version 1.0.0
  * @module appConfig
  */
-import dotenv from 'dotenv';
 import express, { Application } from 'express';
 import { configureMiddlewares } from '@job-finder/middlewares';
 import { startServer } from '@job-finder/utils';
-
-dotenv.config();
 
 /**
  * The Express application instance.
@@ -17,6 +14,8 @@ dotenv.config();
 const app: Application = express();
 
 configureMiddlewares(app);
-app.use(express.static('docs'));
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const API_VERSION = 'api/v1';
 
 startServer(app, 'Job-Finder');

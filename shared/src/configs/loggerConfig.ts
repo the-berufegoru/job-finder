@@ -6,5 +6,5 @@
 import { ILoggerConfig } from '../interfaces';
 
 export const loggerConfig: ILoggerConfig = {
-  logger: 'LOGTAIL_ACCESS_TOKEN',
+  system: 'LOGTAIL_SYSTEM_ACCESS_TOKEN',
 };

@@ -4,6 +4,6 @@
  * @module utils
  */
 
-export { logger } from './loggerUtil';
+export { systemLogger, getLoggerFor } from './loggerUtil';
 
 export { startServer } from './serverUtil';

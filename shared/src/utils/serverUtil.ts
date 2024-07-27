@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 import http from 'http';
 import ip from 'ip';
 import os from 'os';
-import { logger } from './index';
+import { systemLogger } from './index';
 import { sequelize } from '../libs';
 import { Application } from 'express';
 
@@ -33,7 +33,7 @@ export const startServer = async (
     const server: http.Server = http.createServer(app);
 
     server.listen(port, () => {
-      logger.info({
+      systemLogger.info({
         app_name: appName,
         host: `http://${ip.address()}:${port}`,
         platform: os.platform(),
@@ -47,11 +47,11 @@ export const startServer = async (
       const bind = typeof port === 'string' ? `Pipe ${PORT}` : `Port ${PORT}`;
       switch (error.code) {
         case 'EACCES':
-          logger.error(`${bind} requires elevated privileges`);
+          systemLogger.error(`${bind} requires elevated privileges`);
           process.exit(1);
           break;
         case 'EADDRINUSE':
-          logger.error(`${bind} is already in use`);
+          systemLogger.error(`${bind} is already in use`);
           process.exit(1);
           break;
         default:
@@ -59,7 +59,7 @@ export const startServer = async (
       }
     });
   } catch (error: any) {
-    logger.error('Failed to establish connection to database.', {
+    systemLogger.error('Failed to establish connection to database.', {
       error_name: error.constructor.name,
       error_message: `${error}`,
       error_stack: error.stack,

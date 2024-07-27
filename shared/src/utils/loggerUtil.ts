@@ -6,7 +6,7 @@
 import winston, { Logger, createLogger } from 'winston';
 import { Logtail } from '@logtail/node';
 import { LogtailTransport } from '@logtail/winston';
-import { loggerConfig } from '../configs';
+import { loggerConfig } from '../configs/loggerConfig';
 
 type Environment = 'development' | 'production';
 
@@ -72,6 +72,4 @@ export const getLoggerFor: (tokenName: string) => Logger = (
   return LoggerUtil.getInstance().createLogger(accessToken);
 };
 
-const logger = getLoggerFor(loggerConfig?.logger);
-
-export { logger };
+export const systemLogger = getLoggerFor(loggerConfig?.system);
