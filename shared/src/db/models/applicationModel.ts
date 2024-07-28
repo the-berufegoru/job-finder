@@ -4,7 +4,7 @@
  * @module applicationModel
  */
 
-import { DataTypes, Model } from 'sequelize';
+import { Association, DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../libs';
 import { Candidate } from './candidateModel';
 import { Job } from './jobModel';
@@ -39,6 +39,19 @@ class Application extends Model<IApplication> implements IApplication {
    * @type {'Pending' | 'Approved' | 'Shortlisted' | 'Rejected'}
    */
   public status!: 'Pending' | 'Approved' | 'Shortlisted' | 'Rejected';
+
+  public static associations: {
+    job: Association<Application, Job>;
+    candidate: Association<Application, Candidate>;
+  };
+
+  public static associate() {
+    Application.belongsTo(Job, { foreignKey: 'jobId', as: 'job' });
+    Application.belongsTo(Candidate, {
+      foreignKey: 'candidateId',
+      as: 'candidate',
+    });
+  }
 }
 
 Application.init(
@@ -73,15 +86,10 @@ Application.init(
   {
     sequelize,
     modelName: 'Application',
-    timestamps: true, // Set to false if you do not need timestamps
+    timestamps: true,
   }
 );
 
-// Define associations
-Application.belongsTo(Job, { foreignKey: 'jobId', as: 'job' });
-Application.belongsTo(Candidate, {
-  foreignKey: 'candidateId',
-  as: 'candidate',
-});
+// Application associations
 
 export { Application };

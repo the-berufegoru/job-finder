@@ -3,7 +3,7 @@
  * @version 1.0.0
  * @module candidateModel
  */
-import { DataTypes, Model } from 'sequelize';
+import { Association, DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../libs';
 import { User } from './userModel';
 import { ICandidate } from '../../interfaces/candidateInterface';
@@ -74,6 +74,18 @@ class Candidate extends Model<ICandidate> implements ICandidate {
    */
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  /**
+   * Candidate association
+   * @type {Association<Candidate, User>}
+   */
+  public static associations: {
+    user: Association<Candidate, User>;
+  };
+
+  public static associate() {
+    Candidate.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+  }
 }
 
 Candidate.init(
@@ -133,8 +145,5 @@ Candidate.init(
     timestamps: true,
   }
 );
-
-// Define associations
-Candidate.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 export { Candidate };

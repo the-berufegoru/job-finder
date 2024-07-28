@@ -5,9 +5,9 @@
  */
 import { DataTypes, Model, Association } from 'sequelize';
 import { sequelize } from '../../libs';
+import { Job } from './jobModel';
 import { User } from './userModel';
 import { IRecruiter } from '../../interfaces/recruiterInterface';
-import { Job } from './jobModel';
 
 /**
  * Recruiter model class.
@@ -92,6 +92,12 @@ class Recruiter extends Model<IRecruiter> implements IRecruiter {
     user: Association<Recruiter, User>;
     jobs: Association<Recruiter, Job>;
   };
+
+  // define associations in a separate method
+  public static associate() {
+    Recruiter.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+    Recruiter.hasMany(Job, { foreignKey: 'recruiterId', as: 'jobs' });
+  }
 }
 
 Recruiter.init(
@@ -151,9 +157,5 @@ Recruiter.init(
     timestamps: true,
   }
 );
-
-// Define associations with explicit aliases
-Recruiter.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-Recruiter.hasMany(Job, { foreignKey: 'recruiterId', as: 'jobs' });
 
 export { Recruiter };

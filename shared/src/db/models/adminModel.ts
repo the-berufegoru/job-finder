@@ -45,6 +45,10 @@ class Admin extends Model<IAdmin> implements IAdmin {
   public static associations: {
     user: Association<Admin, User>;
   };
+
+  public static associate() {
+    Admin.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+  }
 }
 
 Admin.init(
@@ -75,11 +79,8 @@ Admin.init(
   {
     sequelize,
     modelName: 'Admin',
-    timestamps: true, // Set to false if you do not need timestamps
+    timestamps: true,
   }
 );
-
-// Define associations
-Admin.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 export { Admin };

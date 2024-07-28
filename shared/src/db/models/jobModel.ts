@@ -124,6 +124,11 @@ class Job extends Model<IJob> implements IJob {
     recruiter: Association<Job, Recruiter>;
     applications: Association<Job, Application>;
   };
+
+  public static associate() {
+    Job.belongsTo(Recruiter, { foreignKey: 'recruiterId', as: 'recruiter' });
+    Job.hasMany(Application, { foreignKey: 'jobId', as: 'applications' });
+  }
 }
 
 Job.init(
@@ -205,9 +210,5 @@ Job.init(
     timestamps: true,
   }
 );
-
-// Define associations
-Job.belongsTo(Recruiter, { foreignKey: 'recruiterId', as: 'recruiter' });
-Job.hasMany(Application, { foreignKey: 'jobId', as: 'applications' });
 
 export { Job };
