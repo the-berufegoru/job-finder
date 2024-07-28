@@ -11,15 +11,15 @@ import { Optional } from 'sequelize';
  */
 export interface IRecruiter {
   id?: number;
-  name: string;
-  industry: string;
+  name?: string;
+  industry?: string;
   websiteUrl?: string;
   location?: string;
   description?: string;
   size?: number;
   foundedIn?: number;
   isVerified?: boolean;
-  userId: number;
+  userId?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
