@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
+    "start:authentication": "npx env-cmd -f ./.env nx serve authentication",
     "start:job-finder": "npx env-cmd -f ./.env nx serve job-finder",
     "build": "nx build",
     "format": "nx format",
@@ -39,10 +40,10 @@
     "winston": "^3.13.0"
   },
   "devDependencies": {
-    "@nx/esbuild": "19.4.1",
+    "@nx/esbuild": "19.4.2",
     "@nx/eslint": "19.4.1",
     "@nx/eslint-plugin": "19.4.1",
-    "@nx/jest": "19.4.1",
+    "@nx/jest": "19.4.2",
     "@nx/js": "19.4.2",
     "@nx/node": "19.4.2",
     "@nx/workspace": "19.4.1",
