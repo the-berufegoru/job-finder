@@ -6,6 +6,7 @@
 import express, { Application } from 'express';
 import { configureMiddlewares } from '@job-finder/middlewares';
 import { startServer } from '@job-finder/utils';
+import AuthRoutes from './routes/authRoutes';
 
 const PORT: string = process.env.PORT ?? '3001';
 
@@ -17,7 +18,6 @@ const app: Application = express();
 
 configureMiddlewares(app);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const API_VERSION = 'api/v1/auth';
+app.use('/api/v1/auth', new AuthRoutes().init());
 
 startServer(app, 'Authentication', parseInt(PORT, 10));
