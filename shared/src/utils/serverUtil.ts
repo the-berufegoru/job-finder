@@ -15,16 +15,14 @@ import { Application } from 'express';
 
 dotenv.config();
 
-const PORT: string | number = process.env.PORT ?? 8080;
-
 /**
  * Initialize and start the server.
  * @param {Application} app - The Express application instance.
  */
 export const startServer = async (
   app: Application,
-  appName: string,
-  port = 8080
+  serviceName: string,
+  port = 3000
 ): Promise<void> => {
   try {
     await sequelize.authenticate();
@@ -34,7 +32,7 @@ export const startServer = async (
 
     server.listen(port, () => {
       systemLogger.info({
-        app_name: appName,
+        serviceName: serviceName,
         host: `http://${ip.address()}:${port}`,
         platform: os.platform(),
       });
@@ -44,7 +42,7 @@ export const startServer = async (
       if (error.syscall !== 'listen') {
         throw error;
       }
-      const bind = typeof port === 'string' ? `Pipe ${PORT}` : `Port ${PORT}`;
+      const bind = typeof port === 'string' ? `Pipe ${port}` : `port ${port}`;
       switch (error.code) {
         case 'EACCES':
           systemLogger.error(`${bind} requires elevated privileges`);
