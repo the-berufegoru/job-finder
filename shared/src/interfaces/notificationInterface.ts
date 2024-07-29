@@ -26,15 +26,9 @@ interface INodemailerConfig {
   };
 }
 
-// interface ISendgridConfig {
-// apiKey: string;
-// username: string;
-// }
-
 interface INotificationConfig {
   mailgen: IMailgenConfig;
   nodemailer: INodemailerConfig;
-  // sendgrid: ISendgridConfig;
 }
 
 interface INotificationLib {

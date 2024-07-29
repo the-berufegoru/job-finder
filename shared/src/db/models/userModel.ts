@@ -3,12 +3,9 @@
  * @version 1.0.0
  * @module userModel
  */
-import { DataTypes, Model, Association } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../libs';
 import { IUser } from '../../interfaces/userInterface';
-import { Recruiter } from './recruiterModel';
-import { Employee } from './employeeModel'; // Import Employee model if it is related
-import { Job } from './jobModel'; // Import Job model if it is related
 
 /**
  * User model class.

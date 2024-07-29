@@ -77,6 +77,18 @@ class Payslip extends Model<IPayslip> implements IPayslip {
     payDetail: Association<Payslip, PayDetail>;
     deduction: Association<Payslip, Deduction>;
   };
+
+  public static associate() {
+    Payslip.belongsTo(Employee, { foreignKey: 'employeeId', as: 'employee' });
+    Payslip.belongsTo(PayDetail, {
+      foreignKey: 'payDetailId',
+      as: 'payDetail',
+    });
+    Payslip.belongsTo(Deduction, {
+      foreignKey: 'deductionId',
+      as: 'deduction',
+    });
+  }
 }
 
 Payslip.init(
@@ -156,10 +168,5 @@ Payslip.init(
     },
   }
 );
-
-// Define associations with explicit aliases
-Payslip.belongsTo(Employee, { foreignKey: 'employeeId', as: 'employee' });
-Payslip.belongsTo(PayDetail, { foreignKey: 'payDetailId', as: 'payDetail' });
-Payslip.belongsTo(Deduction, { foreignKey: 'deductionId', as: 'deduction' });
 
 export { Payslip };

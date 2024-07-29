@@ -75,6 +75,12 @@ class Employee extends Model<IEmployee> implements IEmployee {
     deductions: Association<Employee, Deduction>;
     payslips: Association<Employee, Payslip>;
   };
+
+  public static associate() {
+    Employee.hasMany(PayDetail, { foreignKey: 'employeeId', as: 'payDetails' });
+    Employee.hasMany(Deduction, { foreignKey: 'employeeId', as: 'deductions' });
+    Employee.hasMany(Payslip, { foreignKey: 'employeeId', as: 'payslips' });
+  }
 }
 
 Employee.init(
@@ -122,10 +128,5 @@ Employee.init(
     timestamps: false,
   }
 );
-
-// Define associations
-Employee.hasMany(PayDetail, { foreignKey: 'employeeId', as: 'payDetails' });
-Employee.hasMany(Deduction, { foreignKey: 'employeeId', as: 'deductions' });
-Employee.hasMany(Payslip, { foreignKey: 'employeeId', as: 'payslips' });
 
 export { Employee };

@@ -63,6 +63,10 @@ class Deduction extends Model<IDeduction> implements IDeduction {
   public static associations: {
     employee: Association<Deduction, Employee>;
   };
+
+  public static associate() {
+    Deduction.belongsTo(Employee, { foreignKey: 'employeeId', as: 'employee' });
+  }
 }
 
 Deduction.init(
@@ -109,8 +113,5 @@ Deduction.init(
     timestamps: false,
   }
 );
-
-// Define associations
-Deduction.belongsTo(Employee, { foreignKey: 'employeeId', as: 'employee' });
 
 export { Deduction };

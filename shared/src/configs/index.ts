@@ -4,6 +4,10 @@
  * @module configs
  */
 
+export { authConfig } from './authConfig';
+
 export { databaseConfig } from './dbConfig';
 
 export { loggerConfig } from './loggerConfig';
+
+export { notificationConfig } from './notificationConfig';

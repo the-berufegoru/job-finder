@@ -22,7 +22,7 @@ interface IAuthConfig {
 }
 
 interface IAuthorizationConfig {
-  accessToken: string;
+  token: string;
   role: string;
 }
 

@@ -58,6 +58,10 @@ class PayDetail extends Model<IPayDetail> implements IPayDetail {
   public static associations: {
     employee: Association<PayDetail, Employee>;
   };
+
+  public static associate() {
+    PayDetail.belongsTo(Employee, { foreignKey: 'employeeId', as: 'employee' });
+  }
 }
 
 PayDetail.init(
@@ -100,8 +104,5 @@ PayDetail.init(
     timestamps: false,
   }
 );
-
-// Define associations
-PayDetail.belongsTo(Employee, { foreignKey: 'employeeId', as: 'employee' });
 
 export { PayDetail };
