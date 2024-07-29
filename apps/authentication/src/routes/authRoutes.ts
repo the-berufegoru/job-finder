@@ -7,7 +7,7 @@
 
 import { Router } from 'express';
 import AuthController from '../controllers/authController';
-import { AuthorizationMiddleware } from '@job-finder/middlewares';
+import { AuthorizationMiddleware, rateLimiter } from '../middlewares';
 
 export default class AuthRoutes {
   private readonly authRouter: Router;
@@ -32,7 +32,11 @@ export default class AuthRoutes {
      * @memberof module:authRoutes
      * @inner
      */
-    this.authRouter.post('/login', this.authController.login);
+    this.authRouter.post(
+      '/login',
+      rateLimiter.login,
+      this.authController.login
+    );
 
     /**
      * Route for registering a new user.
@@ -41,7 +45,11 @@ export default class AuthRoutes {
      * @memberof module:authRoutes
      * @inner
      */
-    this.authRouter.post('/register', this.authController.register);
+    this.authRouter.post(
+      '/register',
+      rateLimiter.register,
+      this.authController.register
+    );
 
     /**
      * Route for logging out a user.
@@ -52,6 +60,7 @@ export default class AuthRoutes {
      */
     this.authRouter.get(
       '/logout',
+      rateLimiter.logout,
       this.authMiddleware.isAuthorized,
       this.authController.logout
     );
@@ -63,7 +72,11 @@ export default class AuthRoutes {
      * @memberof module:authRoutes
      * @inner
      */
-    this.authRouter.get('/password/forgot', this.authController.forgotPassword);
+    this.authRouter.get(
+      '/password/forgot',
+      rateLimiter.forgotPassword,
+      this.authController.forgotPassword
+    );
 
     /**
      * Route for resetting a user's password.
@@ -87,6 +100,7 @@ export default class AuthRoutes {
      */
     this.authRouter.get(
       '/account/request_activation',
+      rateLimiter.requestActivation,
       this.authController.requestAccountActivation
     );
 
