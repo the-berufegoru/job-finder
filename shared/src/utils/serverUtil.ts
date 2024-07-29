@@ -32,7 +32,7 @@ export const startServer = async (
 
     server.listen(port, () => {
       systemLogger.info({
-        serviceName: serviceName,
+        serviceName,
         host: `http://${ip.address()}:${port}`,
         platform: os.platform(),
       });

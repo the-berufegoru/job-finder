@@ -39,10 +39,10 @@ export default class ResponseUtil {
 
   error(res: Response, code: HttpStatusCode, message: string) {
     res.status(code).json({
-      code: code,
+      code,
       payload: {
         error: {
-          message: message,
+          message,
           type: this.moduleName,
         },
       },
@@ -51,8 +51,8 @@ export default class ResponseUtil {
 
   private _formatResponse(code: HttpStatusCode, payload: unknown) {
     return {
-      code: code,
-      payload: payload,
+      code,
+      payload,
     };
   }
 }
