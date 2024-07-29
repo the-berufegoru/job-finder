@@ -34,7 +34,7 @@ export default class AuthRoutes {
      */
     this.authRouter.post(
       '/login',
-      rateLimiter.loginAndLogout,
+      rateLimiter.loginAndLogout(),
       this.authController.login
     );
 
@@ -47,7 +47,7 @@ export default class AuthRoutes {
      */
     this.authRouter.post(
       '/register',
-      rateLimiter.register,
+      rateLimiter.register(),
       this.authController.register
     );
 
@@ -60,7 +60,7 @@ export default class AuthRoutes {
      */
     this.authRouter.get(
       '/logout',
-      rateLimiter.loginAndLogout,
+      rateLimiter.loginAndLogout(),
       this.authMiddleware.isAuthorized,
       this.authController.logout
     );
@@ -74,7 +74,7 @@ export default class AuthRoutes {
      */
     this.authRouter.get(
       '/password/forgot',
-      rateLimiter.passwordResetAndActivation,
+      rateLimiter.passwordResetAndActivation(),
       this.authController.forgotPassword
     );
 
@@ -87,7 +87,7 @@ export default class AuthRoutes {
      */
     this.authRouter.patch(
       '/password/reset',
-      rateLimiter.passwordResetAndActivation,
+      rateLimiter.passwordResetAndActivation(),
       this.authMiddleware.authorizePasswordReset,
       this.authController.resetPassword
     );
@@ -101,7 +101,7 @@ export default class AuthRoutes {
      */
     this.authRouter.get(
       '/account/request_activation',
-      rateLimiter.passwordResetAndActivation,
+      rateLimiter.passwordResetAndActivation(),
       this.authController.requestAccountActivation
     );
 
@@ -114,7 +114,7 @@ export default class AuthRoutes {
      */
     this.authRouter.get(
       '/account/confirm_activation',
-      rateLimiter.passwordResetAndActivation,
+      rateLimiter.passwordResetAndActivation(),
       this.authMiddleware.authorizeAccountActivation,
       this.authController.confirmAccountActivation
     );
