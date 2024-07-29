@@ -57,11 +57,15 @@ export default class AuthService {
   ): Promise<{ accessToken: string | null }> => {
     if (!accessToken) {
       // If accessToken is null or empty, generate and cache a new refresh token
-      return this.handleTokenRefresh(user, cacheKey);
+      return await this.handleTokenRefresh(user, cacheKey);
     }
 
     // If accessToken is not null or empty, verify it
-    return this.verifyTokenAndRefreshIfNeeded(user, accessToken, cacheKey);
+    return await this.verifyTokenAndRefreshIfNeeded(
+      user,
+      accessToken,
+      cacheKey
+    );
   };
 
   /**

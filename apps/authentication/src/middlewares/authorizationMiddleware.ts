@@ -16,6 +16,7 @@ import { AuthenticationMiddleware } from '@job-finder/middlewares';
 export default class AuthorizationMiddleware extends ResponseUtil {
   private readonly jwtUtil: JwtUtil;
   private readonly authenticationMiddleware: AuthenticationMiddleware;
+
   /**
    * Creates an instance of AuthorizationMiddleware.
    * @memberof AuthorizationMiddleware
