@@ -4,9 +4,9 @@
  * @module authorizationMiddleware
  */
 import { NextFunction, Request, Response } from 'express';
-import { JwtUtil, ResponseUtil } from '../utils';
-import { notificationConfig } from '../configs';
-import AuthenticationMiddleware from './authenticationMiddleware';
+import { JwtUtil, ResponseUtil } from '@job-finder/utils';
+import { notificationConfig } from '@job-finder/configs';
+import { AuthenticationMiddleware } from '@job-finder/middlewares';
 
 /**
  * Middleware class for handling authorization.
