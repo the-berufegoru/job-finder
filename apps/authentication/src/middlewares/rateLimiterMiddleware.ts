@@ -44,11 +44,11 @@ class RateLimiter {
   };
 
   /**
-   * Rate limiter for the login endpoint.
+   * Rate limiter for the login and logout endpoints.
    * Limits each IP to 10 requests per 10 minutes.
    * @returns {RateLimitRequestHandler}
    */
-  public login: () => RateLimitRequestHandler = () => {
+  public loginAndLogout: () => RateLimitRequestHandler = () => {
     return rateLimit({
       windowMs: 10 * 60 * 1000, // 10 minutes
       limit: 10, // Limit each IP to 10 requests per windowMs
@@ -58,39 +58,11 @@ class RateLimiter {
   };
 
   /**
-   * Rate limiter for the logout endpoint.
-   * Limits each IP to 50 requests per 1 minute.
-   * @returns {RateLimitRequestHandler}
-   */
-  public logout: () => RateLimitRequestHandler = () => {
-    return rateLimit({
-      windowMs: 1 * 60 * 1000, // 1 minute
-      limit: 50, // Limit each IP to 50 requests per windowMs
-      standardHeaders: true,
-      legacyHeaders: false,
-    });
-  };
-
-  /**
-   * Rate limiter for the forgot password endpoint.
+   * Rate limiter for the forgot password and request activation endpoints.
    * Limits each IP to 5 requests per 15 minutes.
    * @returns {RateLimitRequestHandler}
    */
-  public forgotPassword: () => RateLimitRequestHandler = () => {
-    return rateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      limit: 5, // Limit each IP to 5 requests per windowMs
-      standardHeaders: true,
-      legacyHeaders: false,
-    });
-  };
-
-  /**
-   * Rate limiter for the request activation endpoint.
-   * Limits each IP to 5 requests per 15 minutes.
-   * @returns {RateLimitRequestHandler}
-   */
-  public requestActivation: () => RateLimitRequestHandler = () => {
+  public passwordResetAndActivation: () => RateLimitRequestHandler = () => {
     return rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
       limit: 5, // Limit each IP to 5 requests per windowMs
