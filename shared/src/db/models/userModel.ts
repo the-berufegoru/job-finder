@@ -1,11 +1,12 @@
 /**
- * @fileoverview
- * @version 1.0.0
+ * @fileoverview User model definition
  * @module userModel
  */
-import { DataTypes, Model } from 'sequelize';
+
+import { Association, DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../libs';
 import { IUser } from '../../interfaces/userInterface';
+import { Admin } from './adminModel';
 
 /**
  * User model class.
@@ -62,6 +63,21 @@ class User extends Model<IUser> implements IUser {
    */
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  /**
+   * Association with Admin model
+   * @type {Association<User, Admin>}
+   */
+  public static associations: {
+    admin: Association<User, Admin>;
+  };
+
+  /**
+   * Set up associations
+   */
+  public static associate() {
+    User.hasOne(Admin, { foreignKey: 'userId', as: 'admin' });
+  }
 }
 
 User.init(

@@ -6,6 +6,7 @@
 import { Op } from 'sequelize';
 import { IAdmin } from '../../interfaces/adminInterface';
 import { Admin } from '../models/adminModel';
+import { User } from '../models/userModel';
 
 export default class AdminHelper {
   private readonly adminModel: typeof Admin;
@@ -30,18 +31,25 @@ export default class AdminHelper {
 
   /**
    * Retrieves an admin by userId.
-   * @param {string} userId - The ID of the admin to retrieve.
+   * @param {number} userId - The ID of the admin to retrieve.
    * @returns {Promise<IAdmin>} The retrieved admin.
    */
-  public getAdmin = async (userId: string): Promise<IAdmin | null> => {
+  public getAdmin = async (userId: number): Promise<IAdmin | null> => {
     try {
-      const admin = await this.adminModel.findOne({
+      const admin = await Admin.findOne({
         where: {
-          id: {
+          userId: {
             [Op.eq]: userId,
           },
         },
+        include: [
+          {
+            model: User,
+            as: 'user',
+          },
+        ],
       });
+
       return admin;
     } catch (error) {
       console.error('Error retrieving admin:', error);
@@ -55,8 +63,14 @@ export default class AdminHelper {
    */
   public getAdmins = async (): Promise<IAdmin[] | null> => {
     try {
-      const admins = await this.adminModel.findAll();
-
+      const admins = await this.adminModel.findAll({
+        include: [
+          {
+            model: User,
+            as: 'user',
+          },
+        ],
+      });
       return admins;
     } catch (error) {
       console.error('Error retrieving admins:', error);
@@ -98,17 +112,13 @@ export default class AdminHelper {
    */
   public removeAdmin = async (userId: string): Promise<void | null> => {
     try {
-      const result = await this.adminModel.destroy({
+      await this.adminModel.destroy({
         where: {
           id: {
             [Op.eq]: userId,
           },
         },
       });
-
-      if (result === 0) {
-        throw new Error('Admin not found');
-      }
     } catch (error) {
       console.error('Error removing admin:', error);
       throw error;

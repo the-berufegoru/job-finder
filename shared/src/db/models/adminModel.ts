@@ -39,13 +39,16 @@ class Admin extends Model<IAdmin> implements IAdmin {
   public userId!: number;
 
   /**
-   * Admin-User association
+   * Association with User model
    * @type {Association<Admin, User>}
    */
   public static associations: {
     user: Association<Admin, User>;
   };
 
+  /**
+   * Set up associations
+   */
   public static associate() {
     Admin.belongsTo(User, { foreignKey: 'userId', as: 'user' });
   }
