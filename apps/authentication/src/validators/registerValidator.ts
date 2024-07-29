@@ -87,10 +87,10 @@ const recruiterRegisterSchema = baseRegisterSchema.keys({
 type SchemaType = Joi.ObjectSchema<any>;
 
 // Validation function
-const registerValidator = async (
+const registerValidator = (
   role: 'admin' | 'candidate' | 'recruiter',
   registerCreds: IAdminRegister | ICandidateRegister | IRecruiterRegister
-): Promise<void> => {
+): void => {
   let schema: SchemaType;
 
   switch (role) {
@@ -108,7 +108,6 @@ const registerValidator = async (
   }
 
   const { error } = schema.validate(registerCreds);
-
   if (error) {
     throw error;
   }
