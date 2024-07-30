@@ -42,12 +42,7 @@ export default class AdminHelper {
             [Op.eq]: userId,
           },
         },
-        include: [
-          {
-            model: User,
-            as: 'user',
-          },
-        ],
+        include: [{ model: User, as: 'user' }],
       });
 
       return admin;
@@ -107,21 +102,28 @@ export default class AdminHelper {
 
   /**
    * Removes an admin by userId.
-   * @param {string} userId - The ID of the admin to remove.
-   * @returns {Promise<void>}
+   * @param {number | string} userId - The ID of the admin to remove.
+   * @returns {Promise<void>} - A promise that resolves when the admin is removed.
+   * @throws {Error} - Throws if an error occurs during removal.
    */
-  public removeAdmin = async (userId: string): Promise<void | null> => {
+  public removeAdmin = async (userId: number | string): Promise<void> => {
     try {
-      await this.adminModel.destroy({
+      const result = await this.adminModel.destroy({
         where: {
-          id: {
+          userId: {
             [Op.eq]: userId,
           },
         },
       });
+
+      if (result === 0) {
+        throw new Error(`Admin with userId ${userId} not found.`);
+      }
+
+      console.log(`Admin with userId ${userId} has been removed.`);
     } catch (error) {
-      console.error('Error removing admin:', error);
-      throw error;
+      console.error('Error removing admin:', error.message);
+      throw new Error(`Failed to remove admin: ${error.message}`);
     }
   };
 }
