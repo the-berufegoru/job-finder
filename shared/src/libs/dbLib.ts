@@ -7,7 +7,6 @@
 import { Redis } from 'ioredis';
 import { Sequelize, Dialect } from 'sequelize';
 import { databaseConfig } from '../configs';
-import { systemLogger } from '../utils';
 
 class DatabaseLib {
   private static instance: DatabaseLib;
@@ -31,7 +30,7 @@ class DatabaseLib {
           idle: 10000,
         },
         logging: (...debug: any[]) => {
-          systemLogger.debug('Sequelize', debug);
+          console.debug('Sequelize', debug);
         },
       }
     );
