@@ -4,11 +4,7 @@
  * @module query
  */
 
-export { IApplicationQuery } from './applicationQuery';
-
 export { ICandidateQuery, ICandidatesQuery } from './candidateQuery';
-
-export { IJobQuery } from './jobQuery';
 
 export { IRecruiterQuery, IRecruitersQuery } from './recruiterQuery';
 
