@@ -35,8 +35,8 @@ export default class AuthorizationMiddleware extends ResponseUtil {
    * @private
    */
   private constructor() {
-    super();
-    this.moduleName = 'authorization.middleware';
+    super('admin');
+    this.moduleName = 'admin.authorization.middleware';
     this.jwtUtil = new JwtUtil();
     this.authenticationMiddleware = new AuthenticationMiddleware();
   }
