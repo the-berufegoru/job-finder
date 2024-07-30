@@ -1,16 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/**
- * @fileoverview Server setup and configuration.
- * @version 1.0.0
- * @since 2023-10-27
- * @module server
- */
 import dotenv from 'dotenv';
 import http from 'http';
 import ip from 'ip';
 import os from 'os';
 import { systemLogger } from './index';
-import { sequelize } from '../libs';
+import { sequelize, associateModels } from '../db/models';
 import { Application } from 'express';
 
 dotenv.config();
@@ -25,9 +18,14 @@ export const startServer = async (
   port = 3000
 ): Promise<void> => {
   try {
+    // Associate all models
+    associateModels();
+
+    // Authenticate and sync database
     await sequelize.authenticate();
     await sequelize.sync({ force: false });
 
+    // Start the server
     const server: http.Server = http.createServer(app);
 
     server.listen(port, () => {
