@@ -6,8 +6,6 @@
 
 export { IAdmin, IAdminCreation } from './adminInterface';
 
-export { IApplication, IApplicationCreation } from './applicationInterface';
-
 export {
   IAuthConfig,
   IAuthorizationConfig,
@@ -21,8 +19,6 @@ export { ICandidate, ICandidateCreation } from './candidateInterface';
 export { IDatabaseConfig } from './dbInterface';
 
 export { IErrorSource, IErrorDetails } from './erroInterface';
-
-export { IJob, IJobCreation } from './jobInterface';
 
 export { IJwtToken } from './jwtInterface';
 
