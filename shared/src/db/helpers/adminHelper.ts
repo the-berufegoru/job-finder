@@ -75,12 +75,12 @@ export default class AdminHelper {
 
   /**
    * Updates an admin by userId.
-   * @param {string} userId - The ID of the admin to update.
+   * @param {number} userId - The ID of the admin to update.
    * @param {IAdmin} adminData - The updated data for the admin.
    * @returns {Promise<IAdmin>} The updated admin.
    */
   public updateAdmin = async (
-    userId: string,
+    userId: number,
     adminData: Partial<IAdmin>
   ): Promise<void | null> => {
     try {
