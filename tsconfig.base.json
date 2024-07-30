@@ -10,20 +10,42 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@job-finder/configs": ["shared/src/configs/index.ts"],
-      "@job-finder/db/helpers": ["shared/src/db/helpers/index.ts"],
-      "@job-finder/dtos": ["shared/src/dtos/index.ts"],
-      "@job-finder/interfaces": ["shared/src/interfaces/index.ts"],
-      "@job-finder/libs": ["shared/src/libs/index.ts"],
-      "@job-finder/middlewares": ["shared/src/middlewares/index.ts"],
-      "@job-finder/utils": ["shared/src/utils/index.ts"],
-      "@job-finder/validators": ["shared/src/validators/index.ts"]
+      "@job-finder/configs": [
+        "shared/src/configs/index.ts"
+      ],
+      "@job-finder/db/helpers": [
+        "shared/src/db/helpers/index.ts"
+      ],
+      "@job-finder/dtos": [
+        "shared/src/dtos/index.ts"
+      ],
+      "@job-finder/interfaces": [
+        "shared/src/interfaces/index.ts"
+      ],
+      "@job-finder/libs": [
+        "shared/src/libs/index.ts"
+      ],
+      "@job-finder/middlewares": [
+        "shared/src/middlewares/index.ts"
+      ],
+      "@job-finder/utils": [
+        "shared/src/utils/index.ts"
+      ],
+      "@job-finder/validators": [
+        "shared/src/validators/index.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }
