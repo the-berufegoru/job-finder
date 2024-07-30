@@ -72,4 +72,7 @@ export const getLoggerFor: (tokenName: string) => Logger = (
   return LoggerUtil.getInstance().createLogger(accessToken);
 };
 
-export const systemLogger = getLoggerFor(loggerConfig?.system);
+export const logger = {
+  admin: getLoggerFor(loggerConfig?.admin),
+  auth: getLoggerFor(loggerConfig?.auth),
+};

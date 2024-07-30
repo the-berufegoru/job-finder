@@ -17,7 +17,7 @@ export {
 
 export { default as JwtUtil } from './jwtUtil';
 
-export { systemLogger, getLoggerFor } from './loggerUtil';
+export { logger } from './loggerUtil';
 
 export { default as NotificationUtil } from './notificationUtil';
 

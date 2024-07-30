@@ -12,7 +12,7 @@ export default class AuthenticationMiddleware extends ResponseUtil {
    * Constructor for the AuthenticationMiddleware class.
    */
   constructor() {
-    super();
+    super('auth');
     this.moduleName = 'authentication.middleware';
   }
 
