@@ -1,18 +1,27 @@
 /**
- * @fileoverview
- * @version
- * @module
+ * @fileoverview Provides services for managing admin profiles.
+ * @version 1.0.0
+ * @module AdminService
  */
+
 import { AdminDTO, toAdminDTO } from '../dtos';
 import { AdminHelper, UserHelper } from '@job-finder/db/helpers';
+import { IAdmin } from '@job-finder/interfaces';
 import { CreateErrorUtil } from '@job-finder/utils';
 
+/**
+ * Service class for handling admin-related operations.
+ * @class AdminService
+ */
 export default class AdminService {
   private readonly moduleName: string;
   private readonly adminHelper: AdminHelper;
   private readonly userHelper: UserHelper;
   private readonly errorUtil: CreateErrorUtil;
 
+  /**
+   * Creates an instance of AdminService.
+   */
   constructor() {
     this.moduleName = 'admin.service';
     this.adminHelper = new AdminHelper();
@@ -20,29 +29,32 @@ export default class AdminService {
     this.errorUtil = new CreateErrorUtil();
   }
 
-  public async getAdmin(userId: number): Promise<{ admin: AdminDTO }> {
+  /**
+   * Retrieves an admin profile by user ID.
+   * @param {number} userId - The ID of the user.
+   * @returns {Promise<{ admin: AdminDTO }>} The admin profile data.
+   * @throws {NotFoundError} If the admin is not found.
+   * @throws {InternalServerError} If an unexpected error occurs.
+   */
+  public getAdmin = async (userId: number): Promise<{ admin: AdminDTO }> => {
     try {
       const foundAdmin = await this.adminHelper.getAdmin(userId);
       if (!foundAdmin) {
-        throw this.errorUtil.createNotFoundError(
-          'We ran into an issue while loading profile.',
-          {
-            module: this.moduleName,
-            method: 'getAdmin',
-            trace: {
-              error: 'Admin document not found.',
-              log: userId,
-            },
-          }
-        );
+        throw this.errorUtil.createNotFoundError('Admin profile not found.', {
+          module: this.moduleName,
+          method: 'getAdmin',
+          trace: {
+            error: 'Admin document not found.',
+            log: userId,
+          },
+        });
       }
 
       const adminDto: AdminDTO = toAdminDTO(foundAdmin);
-
       return { admin: adminDto };
     } catch (error) {
       throw this.errorUtil.createInternalServerError(
-        'An unexpected error occurred while loading profile.',
+        'An unexpected error occurred while loading the admin profile.',
         {
           module: this.moduleName,
           method: 'getAdmin',
@@ -53,30 +65,74 @@ export default class AdminService {
         }
       );
     }
-  }
+  };
 
+  /**
+   * Updates an admin profile.
+   * @param {number} userId - The ID of the user.
+   * @param {Partial<IAdmin>} updateQuery - The fields to update.
+   * @returns {Promise<void>}
+   * @throws {NotFoundError} If the admin is not found.
+   * @throws {InternalServerError} If an unexpected error occurs.
+   */
+  public updateAdmin = async (
+    userId: number,
+    updateQuery: Partial<IAdmin>
+  ): Promise<void> => {
+    try {
+      const foundAdmin = await this.adminHelper.getAdmin(userId);
+      if (!foundAdmin) {
+        throw this.errorUtil.createNotFoundError('Admin profile not found.', {
+          module: this.moduleName,
+          method: 'updateAdmin',
+          trace: {
+            error: 'Admin document not found.',
+            log: userId,
+          },
+        });
+      }
+
+      await this.adminHelper.updateAdmin(userId, updateQuery);
+    } catch (error) {
+      throw this.errorUtil.createInternalServerError(
+        'An unexpected error occurred while updating the admin profile.',
+        {
+          module: this.moduleName,
+          method: 'updateAdmin',
+          trace: {
+            error: error.message,
+            log: userId,
+          },
+        }
+      );
+    }
+  };
+
+  /**
+   * Removes an admin and associated user.
+   * @param {number} userId - The ID of the user to remove.
+   * @returns {Promise<void>}
+   * @throws {NotFoundError} If the admin is not found.
+   * @throws {InternalServerError} If an unexpected error occurs.
+   */
   public removeAdmin = async (userId: number): Promise<void> => {
     try {
       const foundAdmin = await this.adminHelper.getAdmin(userId);
       if (!foundAdmin) {
-        throw this.errorUtil.createNotFoundError(
-          'We ran into an issue while loading profile.',
-          {
-            module: this.moduleName,
-            method: 'removeAdmin',
-            trace: {
-              error: 'Admin document not found.',
-              log: userId,
-            },
-          }
-        );
+        throw this.errorUtil.createNotFoundError('Admin profile not found.', {
+          module: this.moduleName,
+          method: 'removeAdmin',
+          trace: {
+            error: 'Admin document not found.',
+            log: userId,
+          },
+        });
       }
 
-
-      await this.adminHelper.removeAdmin(foundAdmin.userId);
+      await this.userHelper.removeUser(foundAdmin.userId);
     } catch (error) {
       throw this.errorUtil.createInternalServerError(
-        'An unexpected error occurred removing account.',
+        'An unexpected error occurred while removing the admin account.',
         {
           module: this.moduleName,
           method: 'removeAdmin',
