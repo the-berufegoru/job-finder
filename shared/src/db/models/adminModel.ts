@@ -1,11 +1,6 @@
-/**
- * @fileoverview Admin model definition
- * @module adminModel
- */
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Association, DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../libs';
-import { User } from './userModel';
 import { IAdmin } from '../../interfaces/adminInterface';
 
 /**
@@ -14,43 +9,22 @@ import { IAdmin } from '../../interfaces/adminInterface';
  * @extends {Model<IAdmin>}
  */
 class Admin extends Model<IAdmin> implements IAdmin {
-  /**
-   * Admin ID
-   * @type {number}
-   */
   public id!: number;
-
-  /**
-   * First name of the admin
-   * @type {string}
-   */
   public firstName!: string;
-
-  /**
-   * Last name of the admin
-   * @type {string}
-   */
   public lastName!: string;
-
-  /**
-   * Associated user ID
-   * @type {number}
-   */
   public userId!: number;
 
-  /**
-   * Association with User model
-   * @type {Association<Admin, User>}
-   */
   public static associations: {
-    user: Association<Admin, User>;
+    user: Association<Admin, any>;
   };
 
-  /**
-   * Set up associations
-   */
-  public static associate() {
-    Admin.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+  // Admin model
+  public static associate(models: any) {
+    Admin.belongsTo(models.User, {
+      foreignKey: 'userId',
+      as: 'user',
+      onDelete: 'CASCADE',
+    });
   }
 }
 
@@ -69,19 +43,11 @@ Admin.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true,
-      references: {
-        model: User,
-        key: 'id',
-      },
-    },
   },
   {
     sequelize,
     modelName: 'Admin',
+    tableName: 'Admins',
     timestamps: true,
   }
 );
