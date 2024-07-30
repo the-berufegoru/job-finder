@@ -1,14 +1,31 @@
-import express from 'express';
+/**
+ * @fileoverview Express application setup and configuration with request logging.
+ * @version 1.0.0
+ * @module appConfig
+ */
+import express, { Application } from 'express';
+import { configureMiddlewares } from '@job-finder/middlewares';
+import { startServer } from '@job-finder/utils';
+import AdminRoutes from './routes/admin.routes';
+import { authorizationMiddleware } from './middlewares';
 
-const host = process.env.HOST ?? 'localhost';
-const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+import dotenv from 'dotenv';
+dotenv.config();
 
-const app = express();
+const PORT: string = process.env.PORT ?? '3002';
 
-app.get('/', (req, res) => {
-  res.send({ message: 'Hello API' });
-});
+/**
+ * The Express application instance.
+ * @type {Application}
+ */
+const app: Application = express();
 
-app.listen(port, host, () => {
-  console.log(`[ ready ] http://${host}:${port}`);
-});
+configureMiddlewares(app);
+
+app.use(
+  '/api/v1/admin',
+  authorizationMiddleware.authorizeAdmin,
+  new AdminRoutes().init()
+);
+
+startServer(app, 'Admin', parseInt(PORT, 10));
