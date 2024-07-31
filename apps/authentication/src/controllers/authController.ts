@@ -21,7 +21,7 @@ export default class AuthController extends ResponseUtil {
   private readonly authService: AuthService;
 
   constructor() {
-    super();
+    super('auth');
     this.moduleName = 'auth.controller';
     this.authService = new AuthService();
   }
