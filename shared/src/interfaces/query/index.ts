@@ -8,4 +8,8 @@ export { ICandidateQuery, ICandidatesQuery } from './candidateQuery';
 
 export { IRecruiterQuery, IRecruitersQuery } from './recruiterQuery';
 
-export { IUserQuery } from './userQuery';
+export {
+  IUserQuery,
+  IUpdateContactQuery,
+  IUpdatePasswordQuery,
+} from './userQuery';

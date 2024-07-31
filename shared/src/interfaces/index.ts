@@ -29,3 +29,5 @@ export { INotificationConfig, INotificationLib } from './notificationInterface';
 export { IRecruiter, IRecruiterCreation } from './recruiterInterface';
 
 export { IUser, IUserCreation } from './userInterface';
+
+export { IUpdateContactQuery, IUpdatePasswordQuery } from './query';
