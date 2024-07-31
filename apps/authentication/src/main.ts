@@ -20,4 +20,4 @@ configureMiddlewares(app);
 
 app.use('/api/v1/auth', new AuthRoutes().init());
 
-startServer(app, 'Authentication', parseInt(PORT, 10));
+startServer(app, 'Auth', parseInt(PORT, 10));
