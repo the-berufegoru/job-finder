@@ -5,6 +5,7 @@
  */
 
 export {
+  CustomAPIError,
   default as CreateErrorUtil,
   BadRequestError,
   UnauthorizedError,
