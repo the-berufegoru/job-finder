@@ -92,6 +92,8 @@ describe('validatePasswordUpdate', () => {
     };
     const { error } = validatePasswordUpdate(invalidQuery);
     expect(error).toBeDefined();
-    expect(error?.details[0].message).toBe('Please confirm your new password.');
+    expect(error?.details[0].message).toBe(
+      'Confirm Password must match the New Password.'
+    );
   });
 });
