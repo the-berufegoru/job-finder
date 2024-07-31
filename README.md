@@ -454,7 +454,7 @@ npm test
 
 - [x] `► Database Creation`
 - [x] `► Authentiation and Authorization`
-- [ ] `► Admin Profile`
+- [x] `► Admin Profile`
 
 ---
 
