@@ -17,10 +17,11 @@ export default class AdminRoutes {
 
   /**
    * Creates an instance of AdminRoutes.
+   * @param {AdminController} adminController - The controller to handle admin operations.
    */
-  constructor() {
+  constructor(adminController: AdminController = new AdminController()) {
     this.adminRouter = Router();
-    this.adminController = new AdminController();
+    this.adminController = adminController;
   }
 
   /**
@@ -28,10 +29,34 @@ export default class AdminRoutes {
    * @returns {Router} The configured router with admin routes.
    */
   public init = (): Router => {
+    /**
+     * GET /admin/
+     * Route for retrieving the profile of the currently authenticated admin.
+     */
     this.adminRouter.get('/', this.adminController.getProfile);
 
-    this.adminRouter.patch('/', this.adminController.updateProfile);
+    /**
+     * POST /admin/
+     * Route for updating the profile of the currently authenticated admin.
+     */
+    this.adminRouter.post('/', this.adminController.updateProfile);
 
+    /**
+     * POST /admin/contact
+     * Route for updating the contact information of the currently authenticated admin.
+     */
+    this.adminRouter.post('/contact', this.adminController.updateContact);
+
+    /**
+     * POST /admin/password
+     * Route for updating the password of the currently authenticated admin.
+     */
+    this.adminRouter.post('/password', this.adminController.updatePassword);
+
+    /**
+     * DELETE /admin/
+     * Route for removing the account of the currently authenticated admin.
+     */
     this.adminRouter.delete('/', this.adminController.removeAccount);
 
     return this.adminRouter;
