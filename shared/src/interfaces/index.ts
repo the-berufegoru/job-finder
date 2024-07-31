@@ -6,8 +6,6 @@
 
 export { IAdmin, IAdminCreation } from './adminInterface';
 
-export { IApplication, IApplicationCreation } from './applicationInterface';
-
 export {
   IAuthConfig,
   IAuthorizationConfig,
@@ -22,8 +20,6 @@ export { IDatabaseConfig } from './dbInterface';
 
 export { IErrorSource, IErrorDetails } from './erroInterface';
 
-export { IJob, IJobCreation } from './jobInterface';
-
 export { IJwtToken } from './jwtInterface';
 
 export { ILoggerConfig } from './loggerInterface';
@@ -33,3 +29,5 @@ export { INotificationConfig, INotificationLib } from './notificationInterface';
 export { IRecruiter, IRecruiterCreation } from './recruiterInterface';
 
 export { IUser, IUserCreation } from './userInterface';
+
+export { IUpdateContactQuery, IUpdatePasswordQuery } from './query';

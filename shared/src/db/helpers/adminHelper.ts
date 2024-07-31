@@ -6,6 +6,7 @@
 import { Op } from 'sequelize';
 import { IAdmin } from '../../interfaces/adminInterface';
 import { Admin } from '../models/adminModel';
+import { User } from '../models/userModel';
 
 export default class AdminHelper {
   private readonly adminModel: typeof Admin;
@@ -30,18 +31,20 @@ export default class AdminHelper {
 
   /**
    * Retrieves an admin by userId.
-   * @param {string} userId - The ID of the admin to retrieve.
+   * @param {number} userId - The ID of the admin to retrieve.
    * @returns {Promise<IAdmin>} The retrieved admin.
    */
-  public getAdmin = async (userId: string): Promise<IAdmin | null> => {
+  public getAdmin = async (userId: number): Promise<IAdmin | null> => {
     try {
-      const admin = await this.adminModel.findOne({
+      const admin = await Admin.findOne({
         where: {
-          id: {
+          userId: {
             [Op.eq]: userId,
           },
         },
+        include: [{ model: User, as: 'user' }],
       });
+
       return admin;
     } catch (error) {
       console.error('Error retrieving admin:', error);
@@ -55,8 +58,14 @@ export default class AdminHelper {
    */
   public getAdmins = async (): Promise<IAdmin[] | null> => {
     try {
-      const admins = await this.adminModel.findAll();
-
+      const admins = await this.adminModel.findAll({
+        include: [
+          {
+            model: User,
+            as: 'user',
+          },
+        ],
+      });
       return admins;
     } catch (error) {
       console.error('Error retrieving admins:', error);
@@ -66,12 +75,12 @@ export default class AdminHelper {
 
   /**
    * Updates an admin by userId.
-   * @param {string} userId - The ID of the admin to update.
+   * @param {number} userId - The ID of the admin to update.
    * @param {IAdmin} adminData - The updated data for the admin.
    * @returns {Promise<IAdmin>} The updated admin.
    */
   public updateAdmin = async (
-    userId: string,
+    userId: number,
     adminData: Partial<IAdmin>
   ): Promise<void | null> => {
     try {
@@ -93,25 +102,28 @@ export default class AdminHelper {
 
   /**
    * Removes an admin by userId.
-   * @param {string} userId - The ID of the admin to remove.
-   * @returns {Promise<void>}
+   * @param {number | string} userId - The ID of the admin to remove.
+   * @returns {Promise<void>} - A promise that resolves when the admin is removed.
+   * @throws {Error} - Throws if an error occurs during removal.
    */
-  public removeAdmin = async (userId: string): Promise<void | null> => {
+  public removeAdmin = async (userId: number | string): Promise<void> => {
     try {
       const result = await this.adminModel.destroy({
         where: {
-          id: {
+          userId: {
             [Op.eq]: userId,
           },
         },
       });
 
       if (result === 0) {
-        throw new Error('Admin not found');
+        throw new Error(`Admin with userId ${userId} not found.`);
       }
+
+      console.log(`Admin with userId ${userId} has been removed.`);
     } catch (error) {
-      console.error('Error removing admin:', error);
-      throw error;
+      console.error('Error removing admin:', error.message);
+      throw new Error(`Failed to remove admin: ${error.message}`);
     }
   };
 }

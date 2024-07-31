@@ -22,7 +22,7 @@ export default class AuthorizationMiddleware extends ResponseUtil {
    * @memberof AuthorizationMiddleware
    */
   constructor() {
-    super();
+    super('auth');
     this.moduleName = 'authorization.middleware';
     this.jwtUtil = new JwtUtil();
     this.authenticationMiddleware = new AuthenticationMiddleware();

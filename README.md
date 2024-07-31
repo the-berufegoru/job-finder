@@ -453,7 +453,8 @@ npm test
 ## 🛠 Project Roadmap
 
 - [x] `► Database Creation`
-- [ ] `► Authentiation and Authorization`
+- [x] `► Authentiation and Authorization`
+- [x] `► Admin Profile`
 
 ---
 
