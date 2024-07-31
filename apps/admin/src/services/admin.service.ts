@@ -7,10 +7,9 @@ import bcrypt from 'bcrypt';
 import { AdminDTO, toAdminDTO } from '../dtos';
 import { AdminHelper, UserHelper } from '@job-finder/db/helpers';
 import { IAdmin } from '@job-finder/interfaces';
-import { IUpdateContactQuery } from '@job-finder/interfaces';
+import { IUpdateContactQuery,  IUpdatePasswordQuery } from '@job-finder/interfaces';
 import { CreateErrorUtil, CustomAPIError } from '@job-finder/utils';
 import { UserService } from '@job-finder/services';
-import { IUpdatePasswordQuery } from 'shared/src/interfaces/query';
 
 /**
  * Service class for handling admin-related operations.
