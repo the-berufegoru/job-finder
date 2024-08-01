@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @fileoverview Candidate Model Definition
  * @version 1.0.0
@@ -5,7 +6,6 @@
  */
 import { Association, DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../libs';
-import { User } from './userModel';
 import { ICandidate } from '../../interfaces/candidateInterface';
 
 /**
@@ -14,28 +14,9 @@ import { ICandidate } from '../../interfaces/candidateInterface';
  * @extends {Model<ICandidate>}
  */
 class Candidate extends Model<ICandidate> implements ICandidate {
-  /**
-   * Candidate ID
-   * @type {number}
-   */
   public id!: number;
-
-  /**
-   * Candidate first name
-   * @type {string}
-   */
   public firstName!: string;
-
-  /**
-   * Candidate last name
-   * @type {string}
-   */
   public lastName!: string;
-
-  /**
-   * Candidate title
-   * @type {'Mr' | 'Mrs' | 'Ms' | 'Miss' | 'Dr' | 'Prof' | 'Rev' | 'Capt' | 'Sir' | 'Madam' | 'Mx' | 'Rather Not Say'}
-   */
   public title?:
     | 'Mr'
     | 'Mrs'
@@ -49,42 +30,23 @@ class Candidate extends Model<ICandidate> implements ICandidate {
     | 'Madam'
     | 'Mx'
     | 'Rather Not Say';
-
-  /**
-   * Candidate skills
-   * @type {string[]}
-   */
   public skills?: string[];
-
-  /**
-   * Employment status
-   * @type {boolean}
-   */
   public isEmployed?: boolean;
-
-  /**
-   * Associated user ID
-   * @type {number}
-   */
   public userId!: number;
 
-  /**
-   * Timestamps
-   * @type {Date}
-   */
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
-  /**
-   * Candidate association
-   * @type {Association<Candidate, User>}
-   */
   public static associations: {
-    user: Association<Candidate, User>;
+    user: Association<Candidate, any>;
   };
 
-  public static associate() {
-    Candidate.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+  public static associate(models: any) {
+    Candidate.belongsTo(models.User, {
+      foreignKey: 'userId',
+      as: 'user',
+      onDelete: 'CASCADE',
+    });
   }
 }
 
@@ -129,19 +91,11 @@ Candidate.init(
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true,
-      references: {
-        model: User,
-        key: 'id',
-      },
-    },
   },
   {
     sequelize,
     modelName: 'Candidate',
+    tableName: 'Candidates',
     timestamps: true,
   }
 );

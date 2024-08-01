@@ -28,7 +28,7 @@ export interface ICandidate {
     | 'Rather Not Say';
   skills?: string[];
   isEmployed?: boolean;
-  userId: number;
+  userId?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -6,6 +6,7 @@
 
 import { Router } from 'express';
 import AdminController from '../controllers/admin.controller';
+import { UserController } from '@job-finder/controllers';
 
 /**
  * Class for setting up admin-related routes.
@@ -13,52 +14,42 @@ import AdminController from '../controllers/admin.controller';
  */
 export default class AdminRoutes {
   private readonly adminRouter: Router;
-  private readonly adminController: AdminController;
 
   /**
    * Creates an instance of AdminRoutes.
    * @param {AdminController} adminController - The controller to handle admin operations.
    */
-  constructor(adminController: AdminController = new AdminController()) {
+  constructor(
+    private readonly adminController: AdminController = new AdminController(),
+    private readonly userController: UserController = new UserController(
+      'admin'
+    )
+  ) {
     this.adminRouter = Router();
     this.adminController = adminController;
   }
 
   /**
-   * Initializes the admin routes and attaches them to the router.
-   * @returns {Router} The configured router with admin routes.
+   * Sets up the routes for candidate management.
+   * @private
+   */
+  private setupRoutes(): void {
+    this.adminRouter.get('/', this.adminController.getProfile);
+    this.adminRouter.patch('/', this.adminController.updateProfile);
+    this.adminRouter.patch(
+      '/contact',
+      this.userController.updateContactDetails
+    );
+    this.adminRouter.patch('/password', this.userController.updatePassword);
+    this.adminRouter.delete('/', this.userController.removeAccount);
+  }
+
+  /**
+   * Initializes the routes and returns the router instance.
+   * @returns {Router} The configured router instance.
    */
   public init = (): Router => {
-    /**
-     * GET /admin/
-     * Route for retrieving the profile of the currently authenticated admin.
-     */
-    this.adminRouter.get('/', this.adminController.getProfile);
-
-    /**
-     * POST /admin/
-     * Route for updating the profile of the currently authenticated admin.
-     */
-    this.adminRouter.post('/', this.adminController.updateProfile);
-
-    /**
-     * POST /admin/contact
-     * Route for updating the contact information of the currently authenticated admin.
-     */
-    this.adminRouter.post('/contact', this.adminController.updateContact);
-
-    /**
-     * POST /admin/password
-     * Route for updating the password of the currently authenticated admin.
-     */
-    this.adminRouter.post('/password', this.adminController.updatePassword);
-
-    /**
-     * DELETE /admin/
-     * Route for removing the account of the currently authenticated admin.
-     */
-    this.adminRouter.delete('/', this.adminController.removeAccount);
-
+    this.setupRoutes();
     return this.adminRouter;
   };
 }
