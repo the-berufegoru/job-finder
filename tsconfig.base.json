@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@job-finder/configs": ["shared/src/configs/index.ts"],
+      "@job-finder/controllers": ["shared/src/controllers/index.ts"],
       "@job-finder/db/helpers": ["shared/src/db/helpers/index.ts"],
       "@job-finder/dtos": ["shared/src/dtos/index.ts"],
       "@job-finder/interfaces": ["shared/src/interfaces/index.ts"],
