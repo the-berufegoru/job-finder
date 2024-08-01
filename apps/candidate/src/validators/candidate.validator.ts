@@ -1,0 +1,82 @@
+/**
+ * @fileoverview Defines a Joi validator for candidate-related data.
+ * @module CandidateValidator
+ * @version 1.0.0
+ */
+
+import { ICandidate } from '@job-finder/interfaces';
+import Joi from 'joi';
+
+const allowedTitles = [
+  'Mr',
+  'Mrs',
+  'Ms',
+  'Miss',
+  'Dr',
+  'Prof',
+  'Rev',
+  'Capt',
+  'Sir',
+  'Madam',
+  'Mx',
+  'Rather Not Say',
+];
+
+const candidateValidator = Joi.object({
+  firstName: Joi.string()
+    .pattern(/^[A-Za-z]+$/)
+    .max(50) // Optional: limit length if necessary
+    .optional()
+    .messages({
+      'string.base': 'First name should be a string.',
+      'string.empty': 'First name cannot be empty.',
+      'string.pattern.base': 'First name can only contain letters.',
+      'string.max': 'First name must be at most 50 characters long.',
+    }),
+  lastName: Joi.string()
+    .pattern(/^[A-Za-z]+$/)
+    .max(50) // Optional: limit length if necessary
+    .optional()
+    .messages({
+      'string.base': 'Last name should be a string.',
+      'string.empty': 'Last name cannot be empty.',
+      'string.pattern.base': 'Last name can only contain letters.',
+      'string.max': 'Last name must be at most 50 characters long.',
+    }),
+  title: Joi.string()
+    .valid(...allowedTitles)
+    .optional()
+    .messages({
+      'string.valid': `Title must be one of the following: ${allowedTitles.join(
+        ', '
+      )}.`,
+      'any.required': 'Title is required.',
+    }),
+  skills: Joi.array()
+    .items(
+      Joi.string().max(100).messages({
+        'string.max': 'Each skill must be at most 100 characters long.',
+      })
+    )
+    .optional()
+    .messages({
+      'array.base': 'Skills must be an array of strings.',
+    }),
+  isEmployed: Joi.boolean().optional().messages({
+    'boolean.base': 'Employment status must be a boolean value.',
+  }),
+});
+
+/**
+ * Function to validate candidate data.
+ * @param {Partial<ICandidate>} data - The candidate data to validate.
+ * @returns {{ error: Joi.ValidationError | undefined, value?: Partial<ICandidate> }} The result of validation.
+ */
+const validateCandidate = (data: Partial<ICandidate>) => {
+  const { error, value } = candidateValidator.validate(data, {
+    abortEarly: false,
+  });
+  return { error, value };
+};
+
+export { validateCandidate };
