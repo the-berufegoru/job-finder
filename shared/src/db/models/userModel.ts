@@ -30,6 +30,11 @@ class User extends Model<IUser> implements IUser {
       as: 'admin',
       onDelete: 'CASCADE',
     });
+    User.hasOne(models.Candidate, {
+      foreignKey: 'userId',
+      as: 'candidate',
+      onDelete: 'CASCADE',
+    });
   }
 }
 
