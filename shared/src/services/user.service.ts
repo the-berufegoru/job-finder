@@ -3,18 +3,13 @@
  * @module UserService
  * @version 1.0.0
  */
-
 import bcrypt from 'bcrypt';
 import PasswordTemplate from '../templates/passwordTemplate';
 import { UserHelper } from '../db/helpers';
-import { CreateErrorUtil, NotificationUtil } from '../utils';
+import { CreateErrorUtil, CustomAPIError, NotificationUtil } from '../utils';
 import { IUpdateContactQuery, IUpdatePasswordQuery } from '../interfaces/query';
-import { compareStrings } from '../validators';
 import { notificationConfig } from '../configs';
 
-/**
- * Class representing the UserService, which handles user-related operations.
- */
 export default class UserService {
   private readonly moduleName: string;
   private readonly errorUtil: CreateErrorUtil;
@@ -27,7 +22,7 @@ export default class UserService {
    * @param {string} moduleName - The name of the module.
    */
   constructor(moduleName: string) {
-    this.moduleName = moduleName;
+    this.moduleName = `${moduleName}.controller`;
     this.errorUtil = new CreateErrorUtil();
     this.notificationUtil = new NotificationUtil();
     this.userHelper = new UserHelper();
@@ -37,36 +32,38 @@ export default class UserService {
   /**
    * Updates the contact details of a user.
    * @param {number} userId - The ID of the user whose contact details are being updated.
-   * @param {IUpdateContactQuery} contactQuery - The contact details to update (email and/or phone number).
-   * @returns {Promise<void>} A promise that resolves when the contact details are updated.
-   * @throws Will throw an error if updating the contact details fails.
+   * @param {IUpdateContactQuery} updateContactQuery - The contact details to update.
+   * @throws {NotFoundError} If the user is not found.
+   * @throws {InternalServerError} If an unexpected error occurs during the update.
+   * @returns {Promise<void>}
    */
-  public updateContact = async (
+  public updateContactDetails = async (
     userId: number,
-    contactQuery: IUpdateContactQuery
+    updateContactQuery: IUpdateContactQuery
   ): Promise<void> => {
     try {
-      const contactCondition: Partial<IUpdateContactQuery> = {};
-
-      if (contactQuery?.['email']) {
-        contactCondition.email = contactQuery.email;
+      const foundUser = await this.userHelper.getUser({ id: userId });
+      if (!foundUser) {
+        throw this.errorUtil.createNotFoundError(
+          'An unexpected error occurred while updating contact details.',
+          {
+            module: this.moduleName,
+            method: 'updateContactDetails',
+            trace: {
+              error: 'User account not found.',
+              log: userId,
+            },
+          }
+        );
       }
 
-      if (contactQuery?.['phoneNumber']) {
-        contactCondition.phoneNumber = contactQuery.phoneNumber;
-      }
-
-      if (Object.keys(contactCondition).length === 0) {
-        return;
-      }
-
-      await this.userHelper.updateUser(userId, contactCondition);
+      await this.userHelper.updateUser(foundUser['id'], updateContactQuery);
     } catch (error) {
       throw this.errorUtil.createInternalServerError(
         'Failed to update user contact information.',
         {
           module: this.moduleName,
-          method: 'updateContact',
+          method: 'updateContactDetails',
           trace: {
             error: error.message,
             log: userId,
@@ -79,38 +76,73 @@ export default class UserService {
   /**
    * Updates the password of a user.
    * @param {number} userId - The ID of the user whose password is being updated.
-   * @param {IUpdatePasswordQuery} passwordQuery - The password details including current, new, and confirm passwords.
-   * @returns {Promise<void>} A promise that resolves when the password is updated.
-   * @throws Will throw an error if if the passwords do not match, or if the current password is incorrect.
+   * @param {IUpdatePasswordQuery} updatePasswordQuery - The current, new, and confirmed passwords.
+   * @throws {NotFoundError} If the user is not found.
+   * @throws {UnauthorizedError} If the current password is incorrect or if the new password matches the current password.
+   * @throws {InternalServerError} If an unexpected error occurs during the update.
+   * @returns {Promise<void>}
    */
   public updatePassword = async (
     userId: number,
-    passwordQuery: IUpdatePasswordQuery
+    updatePasswordQuery: IUpdatePasswordQuery
   ): Promise<void> => {
     try {
       const foundUser = await this.userHelper.getUser({ id: userId });
-
-      if (
-        !compareStrings(
-          passwordQuery.newPassword,
-          passwordQuery.confirmPassword
-        )
-      ) {
-        throw this.errorUtil.createValidationError(
-          'New and confirm passwords do not match.',
+      if (!foundUser) {
+        throw this.errorUtil.createNotFoundError(
+          'An unexpected error occurred while updating password.',
           {
             module: this.moduleName,
             method: 'updatePassword',
             trace: {
-              error: 'New and confirm passwords do not match.',
+              error: 'User account not found.',
               log: userId,
             },
           }
         );
       }
 
-      const hashedPassword = await bcrypt.hash(passwordQuery.newPassword, 12);
-      await this.userHelper.updateUser(foundUser.id, {
+      const isCurrentPasswordValid = bcrypt.compareSync(
+        updatePasswordQuery['currentPassword'],
+        foundUser['password']
+      );
+      if (!isCurrentPasswordValid) {
+        throw this.errorUtil.createUnauthorizedError(
+          'Current password is incorrect.',
+          {
+            module: this.moduleName,
+            method: 'updatePassword',
+            trace: {
+              error: 'User current password is incorrect.',
+              log: userId,
+            },
+          }
+        );
+      }
+
+      const isConfirmAndHashedPasswordSame = bcrypt.compareSync(
+        updatePasswordQuery['confirmPassword'],
+        foundUser['password']
+      );
+      if (isConfirmAndHashedPasswordSame) {
+        throw this.errorUtil.createUnauthorizedError(
+          'New password cannot be the same as the current password.',
+          {
+            module: this.moduleName,
+            method: 'updatePassword',
+            trace: {
+              error: 'User new and hashed passwords match.',
+              log: userId,
+            },
+          }
+        );
+      }
+
+      const hashedPassword = await bcrypt.hash(
+        updatePasswordQuery['confirmPassword'],
+        12
+      );
+      await this.userHelper.updateUser(foundUser['id'], {
         password: hashedPassword,
       });
 
@@ -118,16 +150,60 @@ export default class UserService {
         foundUser.email,
         `${notificationConfig.mailgen.product.name} account password update`,
         this.passwordTemplate.passwordUpdate(foundUser.email, {
-          ip: '127.0.0.1',
-          timestamp: Date.now().toString(),
+          ip: '127.0.0.1', // Replace with actual user IP
+          timestamp: new Date().toISOString(), // More appropriate timestamp format
         })
       );
     } catch (error) {
+      if (error instanceof CustomAPIError) {
+        throw error; // Re-throw known errors to be handled by the appropriate handler
+      }
       throw this.errorUtil.createInternalServerError(
         'An unexpected error occurred while updating password.',
         {
           module: this.moduleName,
           method: 'updatePassword',
+          trace: {
+            error: error.message,
+            log: userId,
+          },
+        }
+      );
+    }
+  };
+
+  /**
+   * Removes a user's account.
+   * @param {number} userId - The ID of the user whose account is being removed.
+   * @throws {NotFoundError} If the user is not found.
+   * @throws {InternalServerError} If an unexpected error occurs during the removal.
+   * @returns {Promise<void>}
+   */
+  public removeAccount = async (userId: number): Promise<void> => {
+    try {
+      const foundUser = await this.userHelper.getUser({ id: userId });
+
+      if (!foundUser) {
+        throw this.errorUtil.createNotFoundError(
+          'An unexpected error occurred while removing the account.',
+          {
+            module: this.moduleName,
+            method: 'removeAccount',
+            trace: {
+              error: 'User account not found.',
+              log: userId,
+            },
+          }
+        );
+      }
+
+      await this.userHelper.removeUser(foundUser.id);
+    } catch (error) {
+      throw this.errorUtil.createInternalServerError(
+        'An unexpected error occurred while removing the account.',
+        {
+          module: this.moduleName,
+          method: 'removeAccount',
           trace: {
             error: error.message,
             log: userId,
