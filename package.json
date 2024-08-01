@@ -5,6 +5,7 @@
   "scripts": {
     "start:admin": "npx env-cmd -f ./.env nx serve admin",
     "start:authentication": "npx env-cmd -f ./.env nx serve authentication",
+    "start:candidate": "npx env-cmd -f ./.env nx serve candidate",
     "start:job-finder": "npx env-cmd -f ./.env nx serve job-finder",
     "build": "nx build",
     "format": "nx format",
