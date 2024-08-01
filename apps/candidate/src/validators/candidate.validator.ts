@@ -25,33 +25,44 @@ const allowedTitles = [
 const candidateValidator = Joi.object({
   firstName: Joi.string()
     .pattern(/^[A-Za-z]+$/)
-    .max(50) // Optional: limit length if necessary
+    .max(50)
     .optional()
     .messages({
       'string.base': 'First name should be a string.',
       'string.empty': 'First name cannot be empty.',
-      'string.pattern.base': 'First name can only contain letters.',
+      'string.pattern.base': 'First name must only contain letters.',
       'string.max': 'First name must be at most 50 characters long.',
     }),
   lastName: Joi.string()
     .pattern(/^[A-Za-z]+$/)
-    .max(50) // Optional: limit length if necessary
+    .max(50)
     .optional()
     .messages({
       'string.base': 'Last name should be a string.',
       'string.empty': 'Last name cannot be empty.',
-      'string.pattern.base': 'Last name can only contain letters.',
+      'string.pattern.base': 'Last name must only contain letters.',
       'string.max': 'Last name must be at most 50 characters long.',
     }),
-  title: Joi.string()
-    .valid(...allowedTitles)
+    title: Joi.string()
+    .valid(
+      'Mr',
+      'Mrs',
+      'Ms',
+      'Miss',
+      'Dr',
+      'Prof',
+      'Rev',
+      'Capt',
+      'Sir',
+      'Madam',
+      'Mx',
+      'Rather Not Say'
+    )
     .optional()
     .messages({
-      'string.valid': `Title must be one of the following: ${allowedTitles.join(
-        ', '
-      )}.`,
+      'any.only': 'Title must be one of [Mr, Mrs, Ms, Miss, Dr, Prof, Rev, Capt, Sir, Madam, Mx, Rather Not Say]',
       'any.required': 'Title is required.',
-    }),
+    }),  
   skills: Joi.array()
     .items(
       Joi.string().max(100).messages({

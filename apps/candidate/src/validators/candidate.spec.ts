@@ -72,7 +72,7 @@ describe('validateCandidate', () => {
     expect(error).toBeDefined();
     if (error) {
       expect(error.details[0].message).toBe(
-        'Title must be one of the following: Mr, Mrs, Ms, Miss, Dr, Prof, Rev, Capt, Sir, Madam, Mx, Rather Not Say.'
+        'Title must be one of [Mr, Mrs, Ms, Miss, Dr, Prof, Rev, Capt, Sir, Madam, Mx, Rather Not Say]'
       );
     }
   });
@@ -116,6 +116,7 @@ describe('validateCandidate', () => {
 
     expect(error).toBeDefined();
     if (error) {
+      console.log(error.details[0].message);
       expect(error.details[0].message).toBe(
         'Employment status must be a boolean value.'
       );
