@@ -35,6 +35,11 @@ class User extends Model<IUser> implements IUser {
       as: 'candidate',
       onDelete: 'CASCADE',
     });
+    User.hasOne(models.Recruiter, {
+      foreignKey: 'userId',
+      as: 'recruiter',
+      onDelete: 'CASCADE',
+    });
   }
 }
 
