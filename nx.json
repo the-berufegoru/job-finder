@@ -37,7 +37,8 @@
         "apps/job-finder-e2e/**/*",
         "apps/authentication-e2e/**/*",
         "apps/admin-e2e/**/*",
-        "apps/candidate-e2e/**/*"
+        "apps/candidate-e2e/**/*",
+        "apps/recruiter-e2e/**/*"
       ]
     }
   ],

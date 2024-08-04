@@ -76,4 +76,5 @@ export const logger = {
   admin: getLoggerFor(loggerConfig['admin']),
   auth: getLoggerFor(loggerConfig['auth']),
   candidate: getLoggerFor(loggerConfig['candidate']),
+  recruiter: getLoggerFor(loggerConfig['recruiter']),
 };

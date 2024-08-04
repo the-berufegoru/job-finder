@@ -91,9 +91,12 @@ class Recruiter extends Model<IRecruiter> implements IRecruiter {
     user: Association<Recruiter, User>;
   };
 
-  // define associations in a separate method
-  public static associate() {
-    Recruiter.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+  public static associate(models: any) {
+    Recruiter.belongsTo(models.User, {
+      foreignKey: 'userId',
+      as: 'user',
+      onDelete: 'CASCADE',
+    });
   }
 }
 

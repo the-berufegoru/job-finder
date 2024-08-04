@@ -41,10 +41,10 @@ export default class RecruiterHelper {
   };
 
   public createRecruiter = async (
-    recruiterData: IRecruiter
+    updatequery: IRecruiter
   ): Promise<void | null> => {
     try {
-      await this.recruiterModel.create(recruiterData);
+      await this.recruiterModel.create(updatequery);
     } catch (error) {
       console.error('Error creating recruiter', error);
       throw error;
@@ -87,14 +87,11 @@ export default class RecruiterHelper {
 
   public updateRecruiter = async (
     recruiterId: number,
-    recruiterData: IRecruiter
+    updatequery: Partial<IRecruiter>
   ): Promise<void | null> => {
     try {
-      const updateCondition: Partial<IRecruiter> = { ...recruiterData };
-
-      await this.recruiterModel.update(updateCondition, {
+      await this.recruiterModel.update(updatequery, {
         where: { id: { [Op.eq]: recruiterId } },
-        returning: true,
       });
     } catch (error) {
       console.error('Error updating recruiter:', error);

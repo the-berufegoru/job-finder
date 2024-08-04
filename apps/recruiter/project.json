@@ -1,0 +1,56 @@
+{
+  "name": "recruiter",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/recruiter/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/recruiter",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/recruiter/src/main.ts",
+        "tsConfig": "apps/recruiter/tsconfig.app.json",
+        "assets": ["apps/recruiter/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "recruiter:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "recruiter:build:development"
+        },
+        "production": {
+          "buildTarget": "recruiter:build:production"
+        }
+      }
+    }
+  }
+}
