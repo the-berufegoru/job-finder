@@ -2,9 +2,6 @@
   <img src="./job-finder.png" width="300" />
 </p>
 <p align="center">
-    <h1 align="center">JOB-FINDER</h1>
-</p>
-<p align="center">
     <em><code>🔍 Job Recruitment & HR System RESTful API.</code></em>
 </p>
 <p align="center">
@@ -455,6 +452,8 @@ npm test
 - [x] `► Database Creation`
 - [x] `► Authentiation and Authorization`
 - [x] `► Admin Profile`
+- [x] `► Canddate Profile`
+- [x] `► Recruiter Profile`
 
 ---
 
