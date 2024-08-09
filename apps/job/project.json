@@ -1,0 +1,56 @@
+{
+  "name": "job",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/job/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/job",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/job/src/main.ts",
+        "tsConfig": "apps/job/tsconfig.app.json",
+        "assets": ["apps/job/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "job:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "job:build:development"
+        },
+        "production": {
+          "buildTarget": "job:build:production"
+        }
+      }
+    }
+  }
+}
