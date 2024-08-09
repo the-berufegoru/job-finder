@@ -9,11 +9,7 @@ import { IJwtToken } from '../interfaces';
 
 export default class JwtUtil {
   private getJwtKey = (role: string, tokenType: string): string => {
-    const roleConfig = authConfig[role];
-    if (!roleConfig) {
-      throw new Error(`Role ${role} is not valid.`);
-    }
-    const key = roleConfig[tokenType];
+    const key = authConfig[role]['jwt'][tokenType];
     if (!key) {
       throw new Error(`JWT type ${tokenType} is not valid for role ${role}.`);
     }
