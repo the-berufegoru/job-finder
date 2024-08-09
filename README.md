@@ -454,6 +454,7 @@ npm test
 - [x] `► Admin Profile`
 - [x] `► Canddate Profile`
 - [x] `► Recruiter Profile`
+- [ ] `► Job Posting`
 
 ---
 
