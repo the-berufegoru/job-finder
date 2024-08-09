@@ -12,6 +12,7 @@ export {
   IAdminRegister,
   ICandidateRegister,
   IRecruiterRegister,
+  IRoleAuthConfig,
 } from './authInterface';
 
 export { ICandidate, ICandidateCreation } from './candidateInterface';

@@ -3,7 +3,6 @@
  * @version
  * @module
  */
-import bcrypt from 'bcrypt';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { notificationConfig } from '@job-finder/configs';
 import { AuthenticationTemplate } from '../templates';
@@ -14,7 +13,12 @@ import {
   RecruiterHelper,
   UserHelper,
 } from '@job-finder/db/helpers';
-import { CreateErrorUtil, JwtUtil, NotificationUtil } from '@job-finder/utils';
+import {
+  CreateErrorUtil,
+  JwtUtil,
+  NotificationUtil,
+  passwordUtil,
+} from '@job-finder/utils';
 import {
   IAdminRegister,
   ICandidateRegister,
@@ -187,7 +191,7 @@ export default class AuthService {
         method: 'createRoleSpecificUser',
         trace: {
           error: 'Missing role',
-          log: newUser?.email,
+          log: newUser['email'],
         },
       });
     }
@@ -217,7 +221,7 @@ export default class AuthService {
           method: 'createRoleSpecificUser',
           trace: {
             error: `Invalid user role: ${newUser?.role}`,
-            log: newUser?.email,
+            log: newUser['email'],
           },
         });
     }
@@ -246,9 +250,9 @@ export default class AuthService {
     role: 'admin' | 'candidate' | 'recruiter',
     registerCreds: IAdminRegister | ICandidateRegister | IRecruiterRegister
   ): Promise<{ message: string }> => {
-    // Fetch user document from database and check if already exists
+    // Fetch user document from the database and check if it already exists
     const foundUser = await this.userHelper.getUser({
-      email: registerCreds?.email,
+      email: registerCreds['email'],
     });
     if (foundUser) {
       throw this.errorUtil.createBadRequestError(
@@ -258,19 +262,19 @@ export default class AuthService {
           method: 'register',
           trace: {
             error: 'User document already exists.',
-            log: registerCreds?.email,
+            log: registerCreds['email'],
           },
         }
       );
     }
 
-    const hashedPassword = await bcrypt.hash(
-      registerCreds?.confirmPassword,
-      12
+    const hashedPassword = await passwordUtil.hashPassword(
+      registerCreds['confirmPassword'],
+      role
     );
     const userCreds = {
-      email: registerCreds?.email,
-      mobileNumber: registerCreds?.phoneNumber,
+      email: registerCreds['email'],
+      mobileNumber: registerCreds['phoneNumber'],
       password: hashedPassword,
       role,
     };
@@ -279,8 +283,8 @@ export default class AuthService {
       const newUser = await this.userHelper.createUser(userCreds);
       await this.createRoleSpecificUser(newUser, registerCreds);
       const payload = {
-        id: newUser?.id,
-        role: newUser?.role,
+        id: newUser['id'],
+        role: newUser['role'],
         type: 'activationToken',
       };
 
@@ -298,11 +302,32 @@ export default class AuthService {
 
       const activationToken = await generateJwtTokenAsync(payload);
 
-      await this.notificationUtil.sendEmail(
-        newUser.email,
-        `Welcome Aboard! Activate Your ${notificationConfig.mailgen.product.name} Account`,
-        this.authTemplates.activateAccount(newUser.email, activationToken)
-      );
+      await new Promise<void>((resolve, reject) => {
+        this.notificationUtil.sendEmail(
+          newUser.email,
+          `Welcome Aboard! Activate Your ${notificationConfig.mailgen.product.name} Account`,
+          this.authTemplates.activateAccount(newUser.email, activationToken),
+          (sendEmailError) => {
+            if (sendEmailError) {
+              reject(
+                this.errorUtil.createInternalServerError(
+                  'We ran into an issue while creating your account.',
+                  {
+                    module: this.moduleName,
+                    method: 'register',
+                    trace: {
+                      error: `Failed to send account activation email: ${registerCreds['email']}`,
+                      log: sendEmailError,
+                    },
+                  }
+                )
+              );
+            } else {
+              resolve();
+            }
+          }
+        );
+      });
 
       return {
         message:
@@ -363,7 +388,11 @@ export default class AuthService {
       );
     }
 
-    const passwordsMatch = bcrypt.compareSync(password, foundUser.password);
+    const passwordsMatch = await passwordUtil.compareSync(
+      password,
+      foundUser['password'],
+      foundUser['role']
+    );
     if (!passwordsMatch) {
       throw this.errorUtil.createValidationError(
         'Invalid username or password.',
@@ -503,15 +532,36 @@ export default class AuthService {
       const passwordToken = await generateJwtTokenAsync(payload);
       const cacheKey = `password_token:${foundUser.id}`;
 
-      await this.notificationUtil.sendEmail(
-        foundUser.email,
-        `${notificationConfig.mailgen.product.name} account password reset`,
-        this.authTemplates.forgotPassword(
+      await new Promise<void>((resolve, reject) => {
+        this.notificationUtil.sendEmail(
           foundUser.email,
-          passwordToken,
-          foundUser.role
-        )
-      );
+          `${notificationConfig.mailgen.product.name} account password reset`,
+          this.authTemplates.forgotPassword(
+            foundUser.email,
+            passwordToken,
+            foundUser.role
+          ),
+          (sendEmailError) => {
+            if (sendEmailError) {
+              reject(
+                this.errorUtil.createInternalServerError(
+                  'We ran into an issue while sending the password reset link. Please try again.',
+                  {
+                    module: this.moduleName,
+                    method: 'forgotPassword',
+                    trace: {
+                      error: `Failed to send account activation email: ${foundUser['email']}`,
+                      log: sendEmailError,
+                    },
+                  }
+                )
+              );
+            } else {
+              resolve();
+            }
+          }
+        );
+      });
 
       await redis.set(cacheKey, passwordToken);
       return {
@@ -563,7 +613,11 @@ export default class AuthService {
     }
 
     // Check if the new password is the same as the old password
-    const isSamePassword = bcrypt.compareSync(newPassword, foundUser.password);
+    const isSamePassword = await passwordUtil.compareSync(
+      newPassword,
+      foundUser['password'],
+      foundUser['role']
+    );
     if (isSamePassword) {
       throw this.errorUtil.createBadRequestError(
         'Sorry, new password cannot be the same as the old password.',
@@ -579,7 +633,10 @@ export default class AuthService {
     }
 
     // Hash the new password
-    const hashedPassword = bcrypt.hashSync(newPassword, 12);
+    const hashedPassword = await passwordUtil.hashPassword(
+      newPassword,
+      foundUser['role']
+    );
     const cacheKey = `password_token:${foundUser.id}`;
 
     try {
@@ -590,14 +647,19 @@ export default class AuthService {
 
       await redis.del(cacheKey);
       // Send confirmation email
-      await this.notificationUtil.sendEmail(
-        foundUser.email,
-        `${notificationConfig.mailgen.product.name} account password change`,
-        this.authTemplates.passwordUpdate(foundUser.email, {
-          ip: '127.0.0.1',
-          timestamp: Date.now().toString(),
-        })
-      );
+      await new Promise<void>((resolve) => {
+        this.notificationUtil.sendEmail(
+          foundUser.email,
+          `${notificationConfig.mailgen.product.name} account password change`,
+          this.authTemplates.passwordUpdate(foundUser.email, {
+            ip: '127.0.0.1',
+            timestamp: Date(),
+          }),
+          () => {
+            resolve();
+          }
+        );
+      });
 
       return {
         message: 'Password reset successful. Please login to continue.',
@@ -683,11 +745,32 @@ export default class AuthService {
 
       await redis.set(cacheKey, activationToken);
       // Send activation email
-      await this.notificationUtil.sendEmail(
-        foundUser.email,
-        `Welcome Aboard! Activate Your ${notificationConfig.mailgen.product.name} Account`,
-        this.authTemplates.activateAccount(foundUser.email, activationToken)
-      );
+      await new Promise<void>((resolve, reject) => {
+        this.notificationUtil.sendEmail(
+          foundUser.email,
+          `Welcome Aboard! Activate Your ${notificationConfig.mailgen.product.name} Account`,
+          this.authTemplates.activateAccount(foundUser.email, activationToken),
+          (sendEmailError) => {
+            if (sendEmailError) {
+              reject(
+                this.errorUtil.createInternalServerError(
+                  'We ran into an issue while sending the account activation link. Please try again.',
+                  {
+                    module: this.moduleName,
+                    method: 'requestActivation',
+                    trace: {
+                      error: 'Failed to send activation email.',
+                      log: sendEmailError,
+                    },
+                  }
+                )
+              );
+            } else {
+              resolve();
+            }
+          }
+        );
+      });
 
       return {
         message:

@@ -3,10 +3,14 @@
  * @module UserService
  * @version 1.0.0
  */
-import bcrypt from 'bcrypt';
 import PasswordTemplate from '../templates/passwordTemplate';
 import { UserHelper } from '../db/helpers';
-import { CreateErrorUtil, CustomAPIError, NotificationUtil } from '../utils';
+import {
+  CreateErrorUtil,
+  CustomAPIError,
+  NotificationUtil,
+  passwordUtil,
+} from '../utils';
 import { IUpdateContactQuery, IUpdatePasswordQuery } from '../interfaces/query';
 import { notificationConfig } from '../configs';
 
@@ -102,9 +106,10 @@ export default class UserService {
         );
       }
 
-      const isCurrentPasswordValid = bcrypt.compareSync(
+      const isCurrentPasswordValid = await passwordUtil.compareSync(
         updatePasswordQuery['currentPassword'],
-        foundUser['password']
+        foundUser['password'],
+        foundUser['role']
       );
       if (!isCurrentPasswordValid) {
         throw this.errorUtil.createUnauthorizedError(
@@ -120,9 +125,10 @@ export default class UserService {
         );
       }
 
-      const isConfirmAndHashedPasswordSame = bcrypt.compareSync(
+      const isConfirmAndHashedPasswordSame = await passwordUtil.compareSync(
         updatePasswordQuery['confirmPassword'],
-        foundUser['password']
+        foundUser['password'],
+        foundUser['role']
       );
       if (isConfirmAndHashedPasswordSame) {
         throw this.errorUtil.createUnauthorizedError(
@@ -138,25 +144,30 @@ export default class UserService {
         );
       }
 
-      const hashedPassword = await bcrypt.hash(
+      const hashedPassword = await passwordUtil.hashPassword(
         updatePasswordQuery['confirmPassword'],
-        12
+        foundUser['role']
       );
       await this.userHelper.updateUser(foundUser['id'], {
         password: hashedPassword,
       });
 
-      await this.notificationUtil.sendEmail(
-        foundUser.email,
-        `${notificationConfig.mailgen.product.name} account password update`,
-        this.passwordTemplate.passwordUpdate(foundUser.email, {
-          ip: '127.0.0.1', // Replace with actual user IP
-          timestamp: new Date().toISOString(), // More appropriate timestamp format
-        })
-      );
+      await new Promise<void>(() => {
+        this.notificationUtil.sendEmail(
+          foundUser.email,
+          `${notificationConfig.mailgen.product.name} account password update`,
+          this.passwordTemplate.passwordUpdate(foundUser.email, {
+            ip: '127.0.0.1',
+            timestamp: new Date().toISOString(),
+          }),
+          () => {
+            //
+          }
+        );
+      });
     } catch (error) {
       if (error instanceof CustomAPIError) {
-        throw error; // Re-throw known errors to be handled by the appropriate handler
+        throw error;
       }
       throw this.errorUtil.createInternalServerError(
         'An unexpected error occurred while updating password.',
