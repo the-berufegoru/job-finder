@@ -26,30 +26,28 @@ export default class NotificationUtil {
    * @param {string} receiver - The email address of the recipient.
    * @param {string} subject - The subject of the email.
    * @param {string} template - The HTML template for the email body.
-   * @returns {Promise<void>} - A promise that resolves when the email is sent or rejects if an error occurs.
+   * @param {(error: Error | null) => void} callback - A callback function that is called when the email is sent or an error occurs.
    */
-  public sendEmail = async (
+  public sendEmail(
     receiver: string,
     subject: string,
-    template: string
-  ): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      this.notificationUtil.createNodemailerTransport().sendMail(
-        {
-          from: `No-reply ${notificationConfig?.nodemailer?.auth?.user}`,
-          to: receiver,
-          subject,
-          html: template,
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        (error, info) => {
-          if (error) {
-            reject(new Error(`Failed to send email: ${error.message}`));
-          } else {
-            resolve();
-          }
+    template: string,
+    callback: (error: Error | null) => void
+  ): void {
+    this.notificationUtil.createNodemailerTransport().sendMail(
+      {
+        from: `No-reply <${notificationConfig?.nodemailer?.auth?.user}>`,
+        to: receiver,
+        subject,
+        html: template,
+      },
+      (error) => {
+        if (error) {
+          callback(new Error(`Failed to send email: ${error.message}`));
+        } else {
+          callback(null);
         }
-      );
-    });
-  };
+      }
+    );
+  }
 }
