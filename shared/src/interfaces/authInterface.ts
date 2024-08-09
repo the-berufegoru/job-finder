@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
- * @fileoverview
- * @version
- * @module
+ * @fileoverview Interfaces for authentication and registration configurations.
+ * @version 1.0.0
+ * @module authTypes
  */
 
 import { IAdmin } from './adminInterface';
@@ -15,10 +15,19 @@ interface IJwtConfig {
   passwordToken: string;
 }
 
+interface IArgonConfig {
+  pepper: string;
+}
+
+interface IRoleAuthConfig {
+  jwt: IJwtConfig;
+  argon: IArgonConfig;
+}
+
 interface IAuthConfig {
-  admin: IJwtConfig;
-  candidate: IJwtConfig;
-  recruiter: IJwtConfig;
+  admin: IRoleAuthConfig;
+  candidate: IRoleAuthConfig;
+  recruiter: IRoleAuthConfig;
 }
 
 interface IAuthorizationConfig {
@@ -39,6 +48,7 @@ type IRecruiterRegister = IRecruiter & IBaseRegister;
 
 export {
   IAuthConfig,
+  IRoleAuthConfig,
   IAuthorizationConfig,
   IAdminRegister,
   ICandidateRegister,
